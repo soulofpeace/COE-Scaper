@@ -9,20 +9,36 @@
 <body>
 
   <div class="container">
-    <div class="page-header">
-      COE Prices
+    <div class="hero-unit">
+      <h2>COE Prices from 2002 to 2013</h2>
+    </div>
+
+    <div class="page-header row-fluid">
+      Category A
     </div>
     <div class="row-fluid">
       <div class="span8" id="a_chart" style="width: 900px; height: 500px;"></div>
     </div>
+    <div class="page-header row-fluid">
+      Category B
+    </div>
     <div class="row-fluid">
       <div class="span8" id="b_chart" style="width: 900px; height: 500px;"></div>
+    </div>
+    <div class="page-header row-fluid">
+      Category C
     </div>
     <div class="row-fluid">
       <div class="span8" id="c_chart" style="width: 900px; height: 500px;"></div>
     </div>
+    <div class="page-header row-fluid">
+      Category D
+    </div>
     <div class="row-fluid">
       <div class="span8" id="d_chart" style="width: 900px; height: 500px;"></div>
+    </div>
+    <div class="page-header row-fluid">
+      Category E
     </div>
     <div class="row-fluid">
       <div class="span8" id="e_chart" style="width: 900px; height: 500px;"></div>
@@ -35,30 +51,36 @@
   <script src="data/coe.js"></script>
   <script>
 
-  google.load("visualization", "1", {packages:["corechart"]});
+  google.load('visualization', '1', {'packages':['annotatedtimeline']});
   google.setOnLoadCallback(draw_all_charts);
 
 
   var get_cat_data = function(data, category){
 
-    rows = []
-    rows.push(["Date", "Quota", "Received Bids", "Successful Bids", "Premium"])
+    var datatable = new google.visualization.DataTable();
+    datatable.addColumn('date', 'Date');
+    datatable.addColumn('number', 'Quota');
+    datatable.addColumn('number', 'Received Bids');
+    datatable.addColumn('number', 'Successful Bids');
+    datatable.addColumn('number', 'Premium');
     sorted_keys = []
     for(var key in data[category]){
       sorted_keys.push(key);
     }
     sorted_keys.sort();
+    rows = []
     for(i = 0; i< sorted_keys.length; i ++){
       var key = sorted_keys[i];
       var value = data[category][key];
-      row = [key,
+      row = [new Date(Date.parse(key)),
         parseInt(value["quota"].replace(",", "")),
         parseInt(value["received"].replace(",", "")),
         parseInt(value["successful"].replace(",", "")),
         parseInt(value["premium"].replace(",", "").substring(1))];
-      rows.push(row);
+      rows.push(row)
     };
-    return rows;
+    datatable.addRows(rows);
+    return datatable;
   };
   
   function draw_all_charts(){
@@ -69,14 +91,13 @@
     drawChart("E");
   }
   function drawChart(category){
-    var chart = new google.visualization.AreaChart(document.getElementById(category.toLowerCase()+'_chart'));
+    var chart = new google.visualization.AnnotatedTimeLine(document.getElementById(category.toLowerCase()+'_chart'));
     var options = {
       title: 'COE Category '+category.toUpperCase(),
-      hAxis: {title: 'Date',  titleTextStyle: {color: 'red'}}
+      hAxis: {title: 'Date',  titleTextStyle: {color: 'red'}},
+      displayAnnotations: true
     };
-    var datatable = google.visualization.arrayToDataTable(
-      get_cat_data(data, category)
-      );
+    var datatable = get_cat_data(data, category);
     chart.draw(datatable, options);
   }
 
