@@ -37,7 +37,7 @@ def parse_coe(lines, current_index, date, map)
   count = 0 
   offset = 0 
   while count < 4
-    if lines[current_index+offset].strip != '' && lines[current_index+offset].strip.split.size >= 8
+    if !lines[current_index+offset].nil? && lines[current_index+offset].strip != '' && lines[current_index+offset].strip.split.size >= 8
       type = case count
              when 0
                'quota'
@@ -84,7 +84,7 @@ File.open(inputfile, "rb") do |f|
         if (!date_string.nil?) and !(date_string=~/month/i) and date_string =~ /[\w]{3}-[\d]{4}/ and (!date_string.include?(")"))
           date = DateTime.parse(date_string)
           puts "Date: #{date}"
-          if date > DateTime.parse("Apr 2002")
+          if date > DateTime.parse("Apr 2002") 
             parse_coe(lines, index, date, map)
             File.open('coe.json', 'w') do |file|
               file.write(map.to_json)
